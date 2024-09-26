@@ -9,3 +9,10 @@ export default defineConfig({
     threads: false,
   },
 });
+
+// test: {
+//   globals: true,
+//     environment: "node",
+//     setupFiles: './test/setup.ts',
+// },
+// });

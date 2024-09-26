@@ -25,6 +25,7 @@ model StarRating {
   user    User  @relation(references: [id], fields: [userId])
   movieId Int
   movie   Movie @relation(references: [id], fields: [movieId])
+  createdAt DateTime @default(now())
 }
 
 model Movie {
@@ -34,3 +35,4 @@ model Movie {
   starRatings    StarRating[]
   parentalRating String
 }
+
