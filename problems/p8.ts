@@ -5,41 +5,40 @@ import { prisma } from "./prisma";
 
 // find the critic with the lowest average score
 export const findTheGrumpiestCriticId = async () => {
-  const usersWithAvgScore = await prisma.user.findMany({
-    include: {
-      starRatings: true,
-    },
-  });
+  const groupedStarRatings = await prisma.starRating
+    .groupBy({
+      by: ["userId"],
+      _avg: {
+        score: true,
+      },
+      orderBy: {
+        _avg: {
+          score: "asc",
+        },
+      },
+      take: 1,
+    })
+    .then((starRatingAggregated) => starRatingAggregated[0].userId);
 
-  const grumpiestCritic = pipe(
-    usersWithAvgScore,
-    minBy((user) =>
-      user.starRatings.length
-        ? user.starRatings.reduce((sum, rating) => sum + rating.score, 0) /
-          user.starRatings.length
-        : Infinity,
-    ),
-  );
-  return grumpiestCritic?.id || null;
+  return groupedStarRatings;
 };
 
 // find the critic with the highest average score
 export const findTheNicestCriticId = async () => {
-  const usersWithAvgScore = await prisma.user.findMany({
-    include: {
-      starRatings: true,
-    },
-  });
+  const usersWithAvgScore = await prisma.starRating
+    .groupBy({
+      by: ["userId"],
+      _avg: {
+        score: true,
+      },
+      orderBy: {
+        _avg: {
+          score: "desc",
+        },
+      },
+      take: 1,
+    })
+    .then((starRatingAggregated) => starRatingAggregated[0].userId);
 
-  const nicestCritic = pipe(
-    usersWithAvgScore,
-    maxBy((user) =>
-      user.starRatings.length
-        ? user.starRatings.reduce((sum, rating) => sum + rating.score, 0) /
-          user.starRatings.length
-        : -Infinity,
-    ),
-  );
-
-  return nicestCritic?.id || null;
+  return usersWithAvgScore;
 };
