@@ -1,7 +1,7 @@
 import { prisma } from "./prisma";
 
 // get average score for a user
-export const getAverageScoreForUser = async (userId: number) => {
+export const getAverageScoreForUser = (userId: number) => {
   return prisma.starRating
     .aggregate({
       _avg: {
